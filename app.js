@@ -8,6 +8,8 @@ const passport = require('passport');
 const authenticate = require('./authenticate');
 
 const config = require('./config');
+//const favoriteRouter = ('../routes/favoriteRouter')
+const uploadRouter = require('./routes/uploadRouter');
 
 const url = config.mongoUrl;
 const connect = mongoose.connect(url, {
@@ -26,7 +28,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 //app.use(cookieParser('12345-67890-09876-54321'));
-
+app.use('/imageUpload', uploadRouter);
 app.use(session({
   name: 'session-id',
   secret: '12345-67890-09876-54321',

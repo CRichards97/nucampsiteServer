@@ -1,9 +1,10 @@
 const express = require('express');
 const Partner = require('../models/partner');
 const partnerRouter = express.Router();
-
+const authenticate = ('../authenticate')
 partnerRouter.route('/:partnerId/comments')
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get(cors.cors, (req, res, next) => {
     partner.findById(req.params.partnerId)
     .then(partner => {
         if (partner) {
@@ -18,7 +19,7 @@ partnerRouter.route('/:partnerId/comments')
     })
     .catch(err => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     partner.findById(req.params.partnerId)
     .then(partner => {
         if (partner) {
@@ -38,11 +39,11 @@ partnerRouter.route('/:partnerId/comments')
     })
     .catch(err => next(err));
 })
-.put((req, res) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end(`PUT operation not supported on /partners/${req.params.partnerId}/comments`);
 })
-.delete((req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     partner.findById(req.params.partnerId)
     .then(partner => {
         if (partner) {
@@ -66,7 +67,8 @@ partnerRouter.route('/:partnerId/comments')
 });
 
 partnerRouter.route('/:partnerId/comments/:commentId')
-.get((req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get(cors.cors, (req, res, next) => {
     partner.findById(req.params.partnerId)
     .then(partner => {
         if (partner && partner.comments.id(req.params.commentId)) {
@@ -85,11 +87,11 @@ partnerRouter.route('/:partnerId/comments/:commentId')
     })
     .catch(err => next(err));
 })
-.post((req, res) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
     res.end(`POST operation not supported on /partners/${req.params.partnerId}/comments/${req.params.commentId}`);
 })
-.put((req, res, next) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     partner.findById(req.params.partnerId)
     .then(partner => {
         if (partner && partner.comments.id(req.params.commentId)) {
@@ -118,7 +120,7 @@ partnerRouter.route('/:partnerId/comments/:commentId')
     })
     .catch(err => next(err));
 })
-.delete((req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     partner.findById(req.params.partnerId)
     .then(partner => {
         if (partner && partner.comments.id(req.params.commentId)) {
